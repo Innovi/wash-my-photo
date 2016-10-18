@@ -150,7 +150,7 @@ function errorLog(err) {
  * Cleanups dest files
  */
 gulp.task('clean', function() {
-  return del([styles.dest.path, scripts.dest.path]);
+  return del([styles.dest.files, scripts.dest.files, html.dest.files]);
 });
 
 
