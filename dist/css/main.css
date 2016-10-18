@@ -4057,7 +4057,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 }
 .navbar-brand {
   float: left;
-  padding: 24px 15px;
+  padding: 16px 15px;
   font-size: 1.8rem;
   line-height: 2rem;
   height: 50px;
@@ -4105,7 +4105,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   }
 }
 .navbar-nav {
-  margin: 12px -15px;
+  margin: 8px -15px;
 }
 .navbar-nav > li > a {
   padding-top: 10px;
@@ -4143,8 +4143,8 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
     display: inline-block;
   }
   .navbar-nav > li > a {
-    padding-top: 24px;
-    padding-bottom: 24px;
+    padding-top: 16px;
+    padding-bottom: 16px;
   }
 }
 @media (min-width: 768px) {
@@ -6733,4 +6733,12 @@ section {
   margin-right: auto;
   width: 120px;
   height: 120px;
+}
+.service-list {
+  padding-left: 0;
+  list-style: none;
+  margin: 15px 0;
+}
+.service-list .service-list-item:not(:last-child) {
+  margin-bottom: 5px;
 }
