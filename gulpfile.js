@@ -150,7 +150,7 @@ function errorLog(err) {
  * Cleanups dest files
  */
 gulp.task('clean', function() {
-  return del([styles.dest.path, scripts.dest.path]);
+  return del([styles.dest.files, scripts.dest.files, html.dest.files]);
 });
 
 
@@ -168,20 +168,20 @@ gulp.task('clean', function() {
 
     .pipe( autoprefixer( AUTOPREFIXER_BROWSERS ) )
     .pipe( gulp.dest( styles.dest.path ) )
+    .pipe( browserSync.stream() ) // Injects style.css if that is enqueued
     .pipe( size({
       showFiles: true
     }) )
-    .pipe( browserSync.stream() ) // Injects style.css if that is enqueued
 
     .pipe( rename({suffix: '.min'}))
     .pipe( cssmin({
       keepSpecialComments: false
     }))
     .pipe( gulp.dest( styles.dest.path ) )
+    .pipe( browserSync.stream() ) // Injects style.css if that is enqueued
     .pipe( size({
       showFiles: true
-    }) )
-    .pipe( browserSync.stream() ); // Injects style.css if that is enqueued
+    }) );
 });
 
 

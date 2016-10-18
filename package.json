@@ -1,6 +1,6 @@
 {
   "name": "wash-my-photo",
-  "description": "",
+  "description": "Website for Innovi",
   "version": "1.1.1",
   "author": {
     "name": "Jobayer Arman",
@@ -21,7 +21,6 @@
     "gulp-imagemin": "^3.0.3",
     "gulp-jshint": "^2.0.1",
     "gulp-less": "^3.1.0",
-    "gulp-load-plugins": "^1.3.0",
     "gulp-notify": "^2.2.0",
     "gulp-nunjucks-render": "^2.0.0",
     "gulp-plumber": "^1.1.0",
@@ -33,7 +32,5 @@
     "jshint": "^2.9.3",
     "jshint-stylish": "^2.2.1"
   },
-  "dependencies": {
-    "gulp-conventional-changelog": "^1.1.0"
-  }
+  "dependencies": {}
 }
