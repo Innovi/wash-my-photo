@@ -13,7 +13,7 @@
  *      8. InjectCSS instead of browser page reload.
  *
  * @author Jobayer Arman (@JobayerArman)
- * @version 1.2.1
+ * @version 1.3.1
  */
 
 /**
@@ -303,13 +303,18 @@ gulp.task( 'browser-sync', function() {
  */
 gulp.task( 'default', gulpSequence('clean', 'render-html', 'styles', 'scripts', 'image:compress'));
 
+/**
+ * Run all the tasks sequentially
+ * Use this task to development
+ */
+gulp.task( 'serve', gulpSequence('render-html', 'styles', 'scripts', 'browser-sync', 'watch'));
 
 /**
   * Watch Tasks.
   *
   * Watches for file changes and runs specific tasks.
   */
-gulp.task( 'serve', ['render-html', 'styles', 'scripts', 'browser-sync'], function() {
+gulp.task( 'watch', function() {
   gulp.watch( watch.html, [ 'render-html', reload] );       // Render files and reload on HTML file changes.
   gulp.watch( watch.styles, [ 'styles' ] );                 // Run LESS task on file changes.
   gulp.watch( watch.scripts, [ 'scripts', reload ] );       // Reload on customJS file changes.
