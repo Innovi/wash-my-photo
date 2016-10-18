@@ -127,7 +127,3 @@
     $('[data-hover="dropdown"]').dropdownHover();
   });
 })(jQuery, window);
-
-$(document).ready(function(){
-	console.log('hello');
-});
