@@ -311,8 +311,22 @@ gulp.task( 'serve', gulpSequence('render-html', 'styles', 'scripts', 'watch'));
   * Watches for file changes and runs specific tasks.
   */
 gulp.task( 'watch', ['browser-sync'], function() {
-  gulp.watch( watch.styles, [ 'styles' ] );                               // Run LESS task on file changes.
-  gulp.watch( watch.html, [ 'render-html' ]).on("change", reload );       // Render files and reload on HTML file changes.
-  gulp.watch( watch.scripts, [ 'scripts' ] ).on("change", reload );       // Reload on customJS file changes.
-  gulp.watch( watch.images, [ 'image:compress' ] ).on("change", reload ); // Reload on image file changes.
+  gulp.watch( watch.styles, [ 'styles' ] );    // Run LESS task on file changes.
+  gulp.watch( watch.html, [ 'watch-html' ] );  // Render files and reload on HTML file changes.
+  gulp.watch( watch.scripts, [ 'watch-js' ] ); // Reload on customJS file changes.
+  gulp.watch( watch.images, [ 'watch-img' ] ); // Reload on image file changes.
+});
+
+// reloading browsers
+gulp.task('watch-html', ['render-html'], function (done) {
+    browserSync.reload();
+    done();
+});
+gulp.task('watch-js', ['scripts'], function (done) {
+    browserSync.reload();
+    done();
+});
+gulp.task('watch-img', ['image:compress'], function (done) {
+    browserSync.reload();
+    done();
 });
