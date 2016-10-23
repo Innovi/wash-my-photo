@@ -6742,3 +6742,15 @@ section {
 .service-list .service-list-item:not(:last-child) {
   margin-bottom: 5px;
 }
+.price-list {
+  padding-left: 0;
+  list-style: none;
+  margin: 15px 0;
+}
+.price-list .price-list-item > h5 {
+  margin-top: 0;
+}
+.price-list > hr {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
