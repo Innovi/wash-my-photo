@@ -7,13 +7,10 @@
  *         CSS minification.
  *      3. JS: Concatenates & uglifies Custom JS files.
  *      4. Images: Compresses PNG, JPEG, GIF and SVG images.
- *      5. Watches files for changes in CSS or JS.
- *      6. Watches files for changes in HTML.
- *      7. Corrects the line endings.
- *      8. InjectCSS instead of browser page reload.
+ *      5. Watches files for changes in CSS or JS and HTML.
+ *      6. InjectCSS instead of reloading browser page.
  *
  * @author Jobayer Arman (@JobayerArman)
- * @version 1.4.0
  */
 
 /**
@@ -37,7 +34,7 @@ var styles = {
   },
   dest: {
     path      : basePaths.dest + 'css/',
-    files     : basePaths.dest + 'css/*.css'
+    files     : basePaths.dest + 'css/*.+(css|map)'
   }
 };
 // Scripts folders and files
@@ -111,6 +108,7 @@ var gutil        = require('gulp-util');             // Utility functions for gu
 var less         = require('gulp-less');             // Gulp pluign for Sass compilation.
 var cssmin       = require('gulp-cssmin');           // Minifies CSS files.
 var autoprefixer = require('gulp-autoprefixer');     // Autoprefixing magic.
+var sourcemaps   = require('gulp-sourcemaps');       // Maps code in a compressed file (E.g. style.css) back to it’s original position in a source file.
 
 // JS related plugins.
 var jshint       = require('gulp-jshint');           // JSHint plugin for gulp
@@ -127,19 +125,47 @@ var imagemin     = require('gulp-imagemin');         // Minify PNG, JPEG, GIF an
 var browserSync  = require('browser-sync').create(); // Reloads browser and injects CSS. Time-saving synchronised browser testing.
 var del          = require('del');                   // Delete files and folders
 var gulpSequence = require('gulp-sequence');         // Run a series of gulp tasks in order
+var gulpif       = require('gulp-if');               // A ternary gulp plugin: conditionally control the flow of vinyl objects.
+var lazypipe     = require('lazypipe');              // Lazypipe allows to create an immutable, lazily-initialized pipeline.
 var notify       = require('gulp-notify');           // Sends message notification to you
 var plumber      = require('gulp-plumber');          // Prevent pipe breaking caused by errors from gulp plugins
 var reload       = browserSync.reload;               // For manual browser reload.
 var rename       = require('gulp-rename');           // Renames files E.g. style.css -> style.min.css
 var size         = require('gulp-size');             // Logs out the total size of files in the stream and optionally the individual file-sizes
 
+var config = {
+  production: !!gutil.env.production, // Two exclamations turn undefined into a proper false.
+  sourceMaps:  !gutil.env.production
+};
+console.log(config.sourceMaps);
 
 /**
  * Notify Errors
  */
-function errorLog(err) {
-  notify.onError({title: "Gulp Task Error", message: "Check your terminal"})(err); //Error Notification
-  console.log(err.toString()); //Prints Error to Console
+function errorLog(error) {
+  var lineNumber = (error.line) ? 'Line ' + error.line + ' -- ' : '';
+  var column     = (error.column) ? 'Col ' + error.column : '';
+
+  notify({
+    title: 'Task [' + error.plugin + '] Failed',
+    message: lineNumber + '' + column
+  }).write(error); //Error Notification
+
+  // Inspect the error object
+  // console.log(error);
+
+  // Pretty error reporting
+  var report = '';
+  var chalk = gutil.colors.white.bgRed;
+
+  report += '\n';
+  report += chalk('TASK:') + ' [' + error.plugin + ']\n';
+  report += chalk('PROB:') + ' ' + error.message + '\n';
+  if (error.lineNumber) { report += chalk('LINE:') + ' ' + error.lineNumber + '\n'; }
+  if (error.column) { report += chalk('COL:') + '  ' + error.column + '\n'; }
+  if (error.fileName)   { report += chalk('FILE:') + ' ' + error.fileName + '\n'; }
+  console.error(report);
+
   this.emit('end');
 };
 
@@ -149,10 +175,16 @@ function errorLog(err) {
  *
  * Cleanups dest files
  */
-gulp.task('clean', function() {
-  return del([styles.dest.files, scripts.dest.files, html.dest.files]);
+gulp.task('clean:css', function() {
+  return del([styles.dest.files]);
 });
-
+gulp.task('clean:html', function() {
+  return del([html.dest.files]);
+});
+gulp.task('clean:js', function() {
+  return del([scripts.dest.files]);
+});
+gulp.task('clean:all', gulpSequence('clean:css', 'clean:html', 'clean:js'));
 
 /**
  * Task: `styles`.
@@ -160,25 +192,26 @@ gulp.task('clean', function() {
  * Compiles Less, Autoprefixes it and Minifies CSS.
  *
  */
- gulp.task('styles', function() {
+var minifyCss = lazypipe()
+  .pipe( rename, {suffix: '.min'})
+  .pipe( cssmin, {keepSpecialComments: false});
+
+ gulp.task('styles', ['clean:css'], function() {
   return gulp.src( styles.src.mainFile )
     .pipe( plumber( {errorHandler: errorLog}) )
-
+    .pipe( sourcemaps.init() )
     .pipe( less() )
+    .pipe( sourcemaps.write( { includeContent: false } ) ) // By default the source maps include the source code. Pass false to use the original files.
+    .pipe( sourcemaps.init( { loadMaps: true } ) )         // Set to true to load existing maps for source files.
 
     .pipe( autoprefixer( AUTOPREFIXER_BROWSERS ) )
-    .pipe( gulp.dest( styles.dest.path ) )
-    .pipe( browserSync.stream() ) // Injects style.css if that is enqueued
-    .pipe( size({
-      showFiles: true
-    }) )
+    .pipe( gulpif( config.sourceMaps, sourcemaps.write('.') ) )
 
-    .pipe( rename({suffix: '.min'}))
-    .pipe( cssmin({
-      keepSpecialComments: false
-    }))
+    .pipe( gulpif( config.production, minifyCss() ) )
+
     .pipe( gulp.dest( styles.dest.path ) )
-    .pipe( browserSync.stream() ) // Injects style.min.css if that is enqueued
+    .pipe( browserSync.stream() )                          // Injects CSS into browser
+
     .pipe( size({
       showFiles: true
     }) );
@@ -245,7 +278,7 @@ gulp.task( 'render-html', function() {
   */
 gulp.task( 'image:compress', function() {
   return gulp.src( images.src.files )
-    .pipe( plumber({errorHandler: errorLog}) )
+
     .pipe( imagemin( {
       optimizationLevel: 5, // 0-7 low-high
       progressive: true,
@@ -297,7 +330,8 @@ gulp.task( 'browser-sync', function() {
 /**
  * Default Gulp task
  */
-gulp.task( 'default', gulpSequence('clean', 'render-html', 'styles', 'scripts', 'image:compress'));
+gulp.task( 'default', gulpSequence('clean:all', 'render-html', 'styles', 'scripts', 'image:compress'));
+
 
 /**
  * Run all the tasks sequentially
@@ -317,7 +351,7 @@ gulp.task( 'watch', ['browser-sync'], function() {
   gulp.watch( watch.images, [ 'watch-img' ] ); // Reload on image file changes.
 });
 
-// reloading browsers
+// Reloading browser
 gulp.task('watch-html', ['render-html'], function (done) {
     browserSync.reload();
     done();
