@@ -137,7 +137,6 @@ var config = {
   production: !!gutil.env.production, // Two exclamations turn undefined into a proper false.
   sourceMaps:  !gutil.env.production
 };
-console.log(config.sourceMaps);
 
 /**
  * Notify Errors
