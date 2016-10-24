@@ -124,6 +124,7 @@ var imagemin     = require('gulp-imagemin');         // Minify PNG, JPEG, GIF an
 // Utility related plugins.
 var browserSync  = require('browser-sync').create(); // Reloads browser and injects CSS. Time-saving synchronised browser testing.
 var del          = require('del');                   // Delete files and folders
+var filter       = require('gulp-filter');           // Helps work on a subset of the original files by filtering them using globbing.
 var gulpSequence = require('gulp-sequence');         // Run a series of gulp tasks in order
 var gulpif       = require('gulp-if');               // A ternary gulp plugin: conditionally control the flow of vinyl objects.
 var lazypipe     = require('lazypipe');              // Lazypipe allows to create an immutable, lazily-initialized pipeline.
@@ -198,18 +199,22 @@ var minifyCss = lazypipe()
  gulp.task('styles', ['clean:css'], function() {
   return gulp.src( styles.src.mainFile )
     .pipe( plumber( {errorHandler: errorLog}) )
-    .pipe( sourcemaps.init() )
+    .pipe( gulpif( config.sourceMaps, sourcemaps.init() ) )
+
     .pipe( less() )
-    .pipe( sourcemaps.write( { includeContent: false } ) ) // By default the source maps include the source code. Pass false to use the original files.
-    .pipe( sourcemaps.init( { loadMaps: true } ) )         // Set to true to load existing maps for source files.
+
+    .pipe( gulpif( config.sourceMaps, sourcemaps.write({ includeContent: false }) ) ) // By default the source maps include the source code. Pass false to use the original files.
+    .pipe( gulpif( config.sourceMaps, sourcemaps.init({ loadMaps: true }) ) )         // Set to true to load existing maps for source files.
 
     .pipe( autoprefixer( AUTOPREFIXER_BROWSERS ) )
+
     .pipe( gulpif( config.sourceMaps, sourcemaps.write('.') ) )
 
     .pipe( gulpif( config.production, minifyCss() ) )
 
     .pipe( gulp.dest( styles.dest.path ) )
-    .pipe( browserSync.stream() )                          // Injects CSS into browser
+    .pipe( filter( '**/*.css' ) )                                                     // Filtering stream to only css files
+    .pipe( browserSync.stream() )                                                     // Injects CSS into browser
 
     .pipe( size({
       showFiles: true
@@ -223,7 +228,11 @@ var minifyCss = lazypipe()
   * Concatenate and uglify custom scripts.
   *
   */
-gulp.task( 'scripts', function() {
+var minifyScripts = lazypipe()
+  .pipe( rename, {suffix: '.min'})
+  .pipe( uglify );
+
+gulp.task( 'scripts', ['clean:js'], function() {
   return gulp.src( scripts.src.files )
     .pipe( plumber({errorHandler: errorLog}) )
 
@@ -231,17 +240,10 @@ gulp.task( 'scripts', function() {
     .pipe( jshint.reporter('jshint-stylish') )
 
     .pipe( concat( scripts.dest.filename ) )
-    .pipe( gulp.dest( scripts.dest.path ) )
-    .pipe( size({
-      showFiles: true
-    }) )
+    .pipe( gulpif( config.production, minifyScripts() ) )
 
-    .pipe( rename( {
-      basename: 'script',
-      suffix: '.min'
-    }))
-    .pipe( uglify() )
     .pipe( gulp.dest( scripts.dest.path ) )
+
     .pipe( size({
       showFiles: true
     }) );
@@ -318,7 +320,7 @@ gulp.task( 'browser-sync', function() {
     open: false,
 
     // Console log connections
-    logConnections: false,
+    logConnections: true,
 
     // The small pop-over notifications in the browser are not always needed/wanted
     notify: true,
