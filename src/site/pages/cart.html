@@ -1,0 +1,83 @@
+<!-- index.html -->
+{% extends "layout.html" %}
+
+  {% block content %}
+
+    <section class="row">
+      <div class="col-md-12">
+
+        <div class="row">
+          <div class="col-md-10 col-md-offset-2">
+            <table class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th>Service</th>
+                  <th class="text-right">Unit Price</th>
+                  <th class="text-right">Quantity</th>
+                  <th class="text-right">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Service Name</td>
+                  <td class="text-right">XXX BDT</td>
+                  <td class="text-right">5</td>
+                  <td class="text-right">XXX BDT</td>
+                </tr>
+                <tr>
+                  <td>Service Name</td>
+                  <td class="text-right">XXX BDT</td>
+                  <td class="text-right">5</td>
+                  <td class="text-right">XXX BDT</td>
+                </tr>
+                <tr>
+                  <td>Service Name</td>
+                  <td class="text-right">XXX BDT</td>
+                  <td class="text-right">5</td>
+                  <td class="text-right">XXX BDT</td>
+                </tr>
+                <tr>
+                  <td>Service Name</td>
+                  <td class="text-right">XXX BDT</td>
+                  <td class="text-right">5</td>
+                  <td class="text-right">XXX BDT</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-4 col-md-offset-8">
+            <div class="checkout-price">
+              <ul class="price-list">
+                <li class="price-list-item">
+                  <p>Sub Total: <span class="pull-right">XXX BDT</span></p>
+                </li>
+                <li class="price-list-item">
+                  <p>Discount: <span class="pull-right">XXX BDT</span></p>
+                </li>
+                <li class="price-list-item">
+                  <p>Delivery Charge: <span class="pull-right">XXX BDT</span></p>
+                </li>
+                <hr>
+                <li class="price-list-item">
+                  <h5>Grand Total: <span class="pull-right">XXX BDT</span></h5>
+                </li>
+              </ul>
+            </div> <!-- checkout-price -->
+          </div>
+        </div> <!-- price-row -->
+      </div>
+    </section>
+
+    <section class="row">
+      <div class="col-md-4 col-md-offset-8">
+        <h5>Payment Options</h5>
+        <button type="button" class="btn btn-primary btn-lg btn-block">Cash On Delivery</button>
+        <button type="button" class="btn btn-primary btn-lg btn-block">bKash</button>
+        <button type="button" class="btn btn-primary btn-lg btn-block">Debit/Credit Card</button>
+      </div>
+    </section>
+
+  {% endblock %}

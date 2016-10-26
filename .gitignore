@@ -20,5 +20,6 @@ $RECYCLE.BIN/
 # Node.js Modules
 node_modules/
 
-# project files
+# Project files
 files/
+dist/
