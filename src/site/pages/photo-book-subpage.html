@@ -1,0 +1,63 @@
+<!-- photo-book-subpage.html -->
+{% extends "layout.html" %}
+
+  {% block content %}
+    <section class="row">
+      <div class="col-md-12">
+        <h3>Standard</h3>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="row">
+              <div class="col-md-12">
+                <img src="http://placehold.it/600x400" alt="" class="img-responsive center-block" width="100%">
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-md-4"><img src="http://placehold.it/300x200" alt="" class="img-responsive center-block" width="100%"></div>
+              <div class="col-md-4"><img src="http://placehold.it/300x200" alt="" class="img-responsive center-block" width="100%"></div>
+              <div class="col-md-4"><img src="http://placehold.it/300x200" alt="" class="img-responsive center-block" width="100%"></div>
+            </div>
+          </div> <!-- /.inner-six-columns -->
+
+          <div class="col-md-6">
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus numquam doloribus reiciendis unde accusamus! Sapiente nisi, excepturi obcaecati praesentium perferendis magni eaque architecto nobis. Eligendi distinctio delectus veritatis molestiae quae!</p>
+            <div class="dropdown">
+              <button class="btn btn-default dropdown-toggle" type="button" id="photo-print" data-toggle="dropdown" data-hover="dropdown" aria-haspopup="false" aria-expanded="true">
+                Size
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="photo-print">
+                <li><a href="#">4R</a></li>
+                <li><a href="#">5R</a></li>
+                <li><a href="#">6R</a></li>
+                <li><a href="#">8R</a></li>
+              </ul>
+            </div>
+            <br>
+            <div class="dropdown">
+              <button class="btn btn-default dropdown-toggle" type="button" id="photo-print" data-toggle="dropdown" data-hover="dropdown" aria-haspopup="false" aria-expanded="true">
+                Photo Paper
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="photo-print">
+                <li><a href="#">Glossy</a></li>
+                <li><a href="#">Matte</a></li>
+                <li><a href="#">Pearl</a></li>
+              </ul>
+            </div>
+
+            <br>
+
+            <h6>Price: <span class="text-right">35 BDT</span></h6>
+
+            <input class="btn btn-lg btn-primary" type="submit" value="Order Now">
+          </div> <!-- /.inner-six-columns -->
+        </div> <!-- /.inner-row -->
+      </div> <!-- /.twelve-columns -->
+    </section>
+
+    <br>
+
+    {% include "partials/theme-section.html" %}
+  {% endblock %}
