@@ -53,18 +53,21 @@ footer {
   }
 }
 
-.scrollToTop{
-  width:100px;
-  height:80px;
-  padding:10px;
-  font-weight: bold;
-  color: black;
-  position:fixed;
-  bottom:75px;
-  right:40px;
-  display:none;
+.scrollToTop {
+  padding: 12px;
+  border-radius: 50%;
+  color: @gray;
+  position: fixed;
+  bottom: 20px;
+  right: 30px;
+  display: none;
+  background: @emerald;
 }
 
-.scrollToTop:hover{
-  text-decoration:none;
+.scrollToTop {
+  &:hover,
+  &:active,
+  &:focus {
+    color: @gray-darker;
+  }
 }
