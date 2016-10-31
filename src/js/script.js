@@ -22,10 +22,10 @@ $(document).ready(function(){
 
     navLink.filter(function() {
       return this.href==location.href;
-    }).parents("li").addClass('active').siblings().removeClass('active');
+    }).parents('li').addClass('active').siblings().removeClass('active');
 
     navLink.click(function() {
-      $(this).parent().parents("li").addClass('active').siblings().removeClass('active');
+      $(this).parent().parents('li').addClass('active').siblings().removeClass('active');
     });
   });
 
