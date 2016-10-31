@@ -16,4 +16,21 @@ $(document).ready(function(){
     $('html, body').animate({scrollTop : 0},800);
     return false;
   });
+
+  $(function activeLink() {
+    var navLink = $('ul.nav a');
+
+    navLink.filter(function() {
+      return this.href==location.href;
+    }).parents("li").addClass('active').siblings().removeClass('active');
+
+    navLink.click(function() {
+      $(this).parent().parents("li").addClass('active').siblings().removeClass('active');
+    });
+  });
+
+  var dropdownLink = $('.navbar .dropdown > a');
+  dropdownLink.click(function() {
+    location.href = this.href;
+  });
 });
