@@ -55,7 +55,7 @@ var html = {
     path      : basePaths.src + 'site/',
     pages     : basePaths.src + 'site/pages/*.+(html|njk)',
     files     : basePaths.src + 'site/**/*.+(html|njk)',
-    templates : basePaths.src + 'site/templates'
+    templates : basePaths.src + 'site/templates/'
   },
   dest: {
     path      : basePaths.dest + 'public/',
@@ -78,7 +78,10 @@ var watch = {
   styles    : styles.src.allFiles,
   scripts   : scripts.src.files,
   images    : images.src.files,
-  html      : html.src.files
+  html      : {
+    pages       : html.src.pages,
+    templates   : html.src.templates + '**/*.+(html|njk)'
+  }
 };
 
 // Browsers you care about for autoprefixing.
@@ -252,9 +255,9 @@ gulp.task( 'scripts', ['clean:js'], function() {
 
 
 /**
- * Task: render HTML template
+ * Task: render HTML pages
  */
-gulp.task( 'render-html', function() {
+gulp.task( 'render-html:pages', function() {
   return gulp.src( html.src.pages )
     .pipe( plumber({errorHandler: errorLog}) )
     .pipe( changed( html.dest.path, {extension: '.html'} ))
@@ -266,7 +269,20 @@ gulp.task( 'render-html', function() {
       showFiles: true
     }) );
 });
-
+/**
+ * Task: render all HTML files if files inside templates changes
+ */
+gulp.task( 'render-html:all', function() {
+  return gulp.src( html.src.pages )
+    .pipe( plumber({errorHandler: errorLog}) )
+    .pipe( htmlRender({
+      path: html.src.templates
+    }))
+    .pipe( gulp.dest( html.dest.path ))
+    .pipe( size({
+      showFiles: true
+    }) );
+});
 
 /**
   * Task: `images`.
@@ -348,22 +364,27 @@ gulp.task( 'serve', gulpSequence('render-html', 'styles', 'scripts', 'watch'));
   * Watches for file changes and runs specific tasks.
   */
 gulp.task( 'watch', ['browser-sync'], function() {
-  gulp.watch( watch.styles, [ 'styles' ] );    // Run LESS task on file changes.
-  gulp.watch( watch.html, [ 'watch-html' ] );  // Render files and reload on HTML file changes.
-  gulp.watch( watch.scripts, [ 'watch-js' ] ); // Reload on customJS file changes.
-  gulp.watch( watch.images, [ 'watch-img' ] ); // Reload on image file changes.
+  gulp.watch( watch.styles, [ 'styles' ] );                   // Run LESS task on file changes.
+  gulp.watch( watch.html.pages, [ 'watch-html-pages' ] );     // Render files and reload on HTML file changes.
+  gulp.watch( watch.html.templates, [ 'watch-html-all' ] ); // Render files and reload on HTML file changes.
+  gulp.watch( watch.scripts, [ 'watch-js' ] );                // Reload on customJS file changes.
+  gulp.watch( watch.images, [ 'watch-img' ] );                // Reload on image file changes.
 });
 
 // Reloading browser
-gulp.task('watch-html', ['render-html'], function (done) {
-    browserSync.reload();
+gulp.task('watch-html-pages', ['render-html:pages'], function (done) {
+    reload();
+    done();
+});
+gulp.task('watch-html-all', ['render-html:all'], function (done) {
+    reload();
     done();
 });
 gulp.task('watch-js', ['scripts'], function (done) {
-    browserSync.reload();
+    reload();
     done();
 });
 gulp.task('watch-img', ['image:compress'], function (done) {
-    browserSync.reload();
+    reload();
     done();
 });
