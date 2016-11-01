@@ -356,14 +356,14 @@ gulp.task( 'watch', ['browser-sync'], function() {
 
 // Reloading browser
 gulp.task('watch-html', ['render-html'], function (done) {
-    browserSync.reload();
+    reload();
     done();
 });
 gulp.task('watch-js', ['scripts'], function (done) {
-    browserSync.reload();
+    reload();
     done();
 });
 gulp.task('watch-img', ['image:compress'], function (done) {
-    browserSync.reload();
+    reload();
     done();
 });
